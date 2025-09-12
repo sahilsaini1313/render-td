@@ -1,36 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
-    <title>Todo list</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
     <div class="box">
         <h1>Todo List</h1>
+        <% if (alert) { %>
+            <div class="alert"><%= alert %></div>
+        <% } %>
     </div>
+
+
     <div class="box">
-        <% dayej.forEach(function(items){ %>
-            <form action="/delete" method="post">
-                <div class="item">
-                    <input type="checkbox" name="checkbox1" value="<%= items.id %>" onchange="this.form.submit()">
-                    <p>
-                        <%= items.name %>
-                    </p>
-                </div>
-            </form>
-            <% }); %>
-
-
-
-                <form action="/" method="post">
-                    <input type="text" name="ele1" placeholder="Enter the task">
-                    <button type="submit">+</button>
+        <ul>
+        <% dayej.forEach(function(task){ %>
+            <li class="item">
+                <form action="/delete/<%= task._id %>" method="POST" class="inline-form" onsubmit="return Delete()">
+                    <span><%= task.name %> (<%= task.priority %>)</span>
+                    <!-- Edit Button -->
+                    <a href="/edit/<%= task._id %>" title="Edit">
+                        <i class="fa-solid fa-pencil"></i>
+                    </a>
+                    <!-- Delete Button -->
+                    <button type="submit" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
                 </form>
-    </div>
-</body>
+            </li>
+        <% }); %>
+        </ul>
 
+
+        <form name="todoForm" action="/" method="POST" onsubmit="return validateForm()">
+            <input type="text" name="ele1" placeholder="Enter the task">
+            <select name="priority">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+            <button type="submit">+</button>
+        </form>
+    </div>
+    <script>
+        function validateForm() {
+            var x = document.forms["todoForm"]["ele1"].value;
+            if (x.trim() === "") {
+                alert("Please enter a task");
+                return false;
+            }
+            return true;
+        }
+        function Delete(){
+            return confirm("Are you Sure you want to delete this task?");
+        }
+         window.onload = function() {
+            var alertDiv = document.querySelector('.alert');
+            if (alertDiv) {
+                setTimeout(function() {
+                    alertDiv.style.display = 'none';
+                }, 2000);
+            }
+        };
+
+    </script>
+</body>
 </html>

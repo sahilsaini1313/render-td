@@ -29,61 +29,93 @@
 
 
 const express = require('express');
-const bodyParser = require('body-parser');
-var app = express();
+const mongoose = require('mongoose');
+const app = express();
 
+// Middleware
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-const mongoose = require('mongoose');
-mongoose.connect("mongodb://localhost:27017/todo");
+// MongoDB setup
+mongoose.connect("mongodb+srv://sainisahilpreet2005_db_user:axsmPhedVKzuQvg2@sahil-db.3tfxixf.mongodb.net/?retryWrites=true&w=majority&appName=sahil-db");
+
 const trySchema = new mongoose.Schema({
-    name: String
+    name: String,
+    priority: { type: String, default: "Low" }
 });
 
-const item = mongoose.model("task", trySchema);
+const Item = mongoose.model("task", trySchema);
 
-// todo1.save();
-// todo2.save();
-// todo3.save();
+// Show all tasks
 app.get("/", function(req, res) {
-    item.find({})
+    const alert = req.query.alert;
+    Item.find({})
         .then(foundItems => {
-            res.render("list", { dayej: foundItems });
+            res.render("list", { dayej: foundItems, alert });
         })
         .catch(err => {
-            console.log(err);
+            res.render("list", { dayej: [], alert: "Error loading tasks" });
         });
 });
 
+// Add task
 app.post("/", function(req, res) {
     const itemName = req.body.ele1;
-    const todo4 = new item({
-        name: itemName
-    });
+    const priority = req.body.priority || "Low";
+    if (!itemName || itemName.trim() === "") {
+        return res.redirect("/?alert=" + encodeURIComponent("Please enter a task"));
+    }
+    const todo4 = new Item({ name: itemName, priority });
     todo4.save()
         .then(() => {
-            res.redirect("/");
+            res.redirect("/?alert=" + encodeURIComponent("Task added successfully!"));
         })
         .catch(err => {
-            console.log(err);
+            res.redirect("/?alert=" + encodeURIComponent("Error adding task"));
         });
 });
-app.post("/delete", function(req, res) {
-    const checked = req.body.checkbox1;
-    item.findByIdAndDelete(checked)
+
+// Delete task
+app.post("/delete/:id", function(req, res) {
+    const id = req.params.id;
+    Item.findByIdAndDelete(id)
         .then(() => {
-            console.log("Deleted successfully");
-            res.redirect("/");
+            res.redirect("/?alert=" + encodeURIComponent("Task deleted successfully!"));
         })
         .catch(err => {
-            console.log(err);
+            res.redirect("/?alert=" + encodeURIComponent("Error deleting task"));
         });
 });
 
+// Edit task page
+app.get("/edit/:id", function(req, res) {
+    Item.findById(req.params.id)
+        .then(task => {
+            if (!task) return res.redirect("/?alert=Task not found");
+            res.render("edit", { task });
+        })
+        .catch(err => {
+            res.redirect("/?alert=Error loading edit form");
+        });
+});
 
+// Edit task submission
+app.post("/edit/:id", function(req, res) {
+    const { ele1, priority } = req.body;
+    if (!ele1 || ele1.trim() === "") {
+        return res.redirect("/?alert=" + encodeURIComponent("Task title cannot be empty!"));
+    }
+    Item.findByIdAndUpdate(req.params.id, { name: ele1, priority })
+        .then(() => {
+            res.redirect("/?alert=" + encodeURIComponent("Task updated successfully!"));
+        })
+        .catch(err => {
+            res.redirect("/?alert=" + encodeURIComponent("Error updating task"));
+        });
+});
 
-    app.listen(3000, function() {
-    console.log("Server Started");
+// Start server
+app.listen(3000, function() {
+    console.log("Server Started on port 3000");
 });

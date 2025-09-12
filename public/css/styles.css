@@ -7,6 +7,7 @@ html{
 h1{
     color: #000;
     padding: 10px;
+    text-align: center;
 }
 
 .box{
@@ -58,15 +59,12 @@ form{
 }
 
 button{
-    min-height: 50px;
-    width: 50px;
-    border-radius: 50%;
     color: #fff;
-    border-color: transparent;
+    border: none;
+    outline: none;
+    padding: 8px 15px;
+    border-radius: 20px;
     background-color: #a683e3;
-    font-size: 30px;
-    padding-bottom: 6px;
-    border-width: 0;
     cursor: pointer;
     transition: background 0.2s;
 }
@@ -97,7 +95,7 @@ select {
     border-radius: 5px;
     border: 1px solid #a683e3;
     margin: 5px;
-    padding: 2px 10px;
+    padding: 2px 8px;
     background: #f7f7fa;
     color: #00204a;
 }
@@ -113,7 +111,7 @@ footer{
     text-align: center;
 }
 
-.alert {
+.alert{
     background: #ffe4b5;
     color: #a683e3;
     padding: 10px;
@@ -146,3 +144,14 @@ footer{
     border: none;
     outline: none;
 }
+.cancel{
+    margin-left:10px;
+    text-decoration: none;
+
+}
+.cancel:hover{
+    text-decoration: underline;
+}
+
+
+

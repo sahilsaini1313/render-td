@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Task</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="box">
+        <h1>Edit Task</h1>
+        </div>
+    <div class="box">
+        <form action="/edit/<%= task._id %>" method="POST" onsubmit="return validateForm()">
+            <input type="text" name="ele1" value="<%= task.name %>" placeholder="Edit the task">
+            <select name="priority">
+                <option value="Low" <%= task.priority === "Low" ? "selected" : "" %>>Low</option>
+                <option value="Medium" <%= task.priority === "Medium" ? "selected" : "" %>>Medium</option>
+                <option value="High" <%= task.priority === "High" ? "selected" : "" %>>High</option>
+            </select>
+            <button type="submit">Update</button>
+            <a href="/" class="cancel">Cancel</a>
+        </form>
+    </div>
+    <script>
+        function validateForm() {
+            var x = document.forms[0]["ele1"].value;
+            if (x.trim() === "") {
+                alert("Task title cannot be empty!");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>
